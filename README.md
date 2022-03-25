@@ -9,6 +9,7 @@ Automating all the things with my webcam
 ## About <a name = "about"></a>
 
 Automates toggling a pair of Elgato Key Light Airs when a webcam is activated.
+This currently only works on MacOS and has been tested with a Logitech Brio.
 
 ## Getting Started <a name = "getting_started"></a>
 
