@@ -1,4 +1,4 @@
-use std::error::Error;
+use std::{error::Error, time::Duration, thread};
 
 use serde_json::json;
 
@@ -7,17 +7,13 @@ fn main() {
     loop {
         if let Some(state) = media_state::camera_state() {
             match state {
-                media_state::State::On => {
-                    lights_on = set_lights(lights_on, true).ok();
-                },
-                media_state::State::Off => {
-                    lights_on = set_lights(lights_on, false).ok();
-                }
+                media_state::State::On => lights_on = set_lights(lights_on, true).ok(),
+                media_state::State::Off =>  lights_on = set_lights(lights_on, false).ok()
             }
         } else {
             println!("unable to determine camera state");
         }
-        std::thread::sleep(std::time::Duration::from_secs(1));
+        thread::sleep(Duration::from_secs(1));
     }
 }
 
