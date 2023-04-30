@@ -1,3 +1,4 @@
+use reqwest::blocking::Client;
 use std::{error::Error, thread, time::Duration};
 
 use serde_json::json;
@@ -10,11 +11,20 @@ pub enum DeviceState {
 
 fn main() {
     let mut lights_on: Option<DeviceState> = None;
+    let client = reqwest::blocking::Client::new();
+
     loop {
         if let Some(state) = media_state::camera_state() {
             match state {
-                media_state::State::On => lights_on = set_lights(lights_on, DeviceState::On).ok(),
-                media_state::State::Off => lights_on = set_lights(lights_on, DeviceState::Off).ok(),
+                media_state::State::On => {
+                    lights_on = set_lights(&client, lights_on, DeviceState::On).ok();
+                }
+                media_state::State::Off => {
+                    lights_on = set_lights(&client, lights_on, DeviceState::Off).ok();
+                }
+            }
+            if lights_on == None {
+                println!("unable to set device state")
             }
         } else {
             println!("unable to determine camera state");
@@ -24,6 +34,7 @@ fn main() {
 }
 
 fn set_lights(
+    client: &Client,
     current_state: Option<DeviceState>,
     target_state: DeviceState,
 ) -> Result<DeviceState, Box<dyn Error>> {
@@ -44,12 +55,11 @@ fn set_lights(
         "numberOfLights":1
     });
 
-    send_request_to_lights(body)?;
+    send_request_to_lights(client, body)?;
     Ok(target_state)
 }
 
-fn send_request_to_lights(body: serde_json::Value) -> Result<(), Box<dyn Error>> {
-    let client = reqwest::blocking::Client::new();
+fn send_request_to_lights(client: &Client, body: serde_json::Value) -> Result<(), Box<dyn Error>> {
     client
         .put("http://192.168.1.234:9123/elgato/lights")
         .json(&body)
