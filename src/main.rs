@@ -1,4 +1,4 @@
-use reqwest::blocking::Client;
+use reqwest;
 use std::{error::Error, thread, time::Duration};
 
 use serde_json::json;
@@ -34,7 +34,7 @@ fn main() {
 }
 
 fn set_lights(
-    client: &Client,
+    client: &reqwest::blocking::Client,
     current_state: Option<DeviceState>,
     target_state: DeviceState,
 ) -> Result<DeviceState, Box<dyn Error>> {
@@ -48,7 +48,7 @@ fn set_lights(
     {
         "lights":[
             {
-                "brightness":50,
+                "brightness":90,
                 "temperature":165,
                 "on":target_state == DeviceState::On,
             }],
@@ -59,7 +59,7 @@ fn set_lights(
     Ok(target_state)
 }
 
-fn send_request_to_lights(client: &Client, body: serde_json::Value) -> Result<(), Box<dyn Error>> {
+fn send_request_to_lights(client: &reqwest::blocking::Client, body: serde_json::Value) -> Result<(), Box<dyn Error>> {
     client
         .put("http://192.168.1.234:9123/elgato/lights")
         .json(&body)

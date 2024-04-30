@@ -17,6 +17,8 @@ This currently only works on MacOS and has been tested with a Logitech Brio.
 1. Find the IP address of your lights
 1. Set the environemnt variables `$LIGHT_1` and `$LIGHT_2` to the IP address of your lights
     - `export LIGHT_1=192.168.1.10; export LIGHT_2=192.168.1.11`
+1. ensure you have cmake installed
+
 
 ## Usage
 
